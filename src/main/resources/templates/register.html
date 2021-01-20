@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+<html th:replace="~{layout :: layout(~{::title}, ~{::content})}"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:fragment="title">Inscription</title>
+</head>
+<body>
+<div th:fragment="content">
+    <form name="f" th:action="@{/user/register}" method="post">
+        <fieldset th:object="${user}">
+            <legend>Inscription</legend>
+
+            <label for="email">E-Mail</label>
+            <input th:field="*{email}" type="email" id="email" name="email" autocomplete="off"/>
+            <p th:each="error : ${#fields.errors('email')}" th:text="${error}">Validation error</p>
+            <label for="password">Mot de passe</label>
+            <input th:field="*{password}" type="password" id="password" name="password" autocomplete="off"/>
+            <p th:each="error : ${#fields.errors('password')}" th:text="${error}">Validation error</p>
+            <label for="password_confirm">Confirmation du mot de passe</label>
+            <input th:field="*{password_confirm}" type="password" id="password_confirm" name="password_confirm"
+                   autocomplete="off"/>
+            <p th:each="error : ${#fields.errors('password_confirm')}" th:text="${error}">Validation error</p>
+
+            <div class="form-actions">
+                <button type="submit" class="btn">Inscription</button>
+            </div>
+        </fieldset>
+    </form>
+</div>
+</body>
+</html>

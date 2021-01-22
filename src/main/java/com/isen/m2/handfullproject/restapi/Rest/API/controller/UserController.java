@@ -1,35 +1,29 @@
 package com.isen.m2.handfullproject.restapi.Rest.API.controller;
 
-import com.googlecode.javaewah.IteratorUtil;
+import com.isen.m2.handfullproject.restapi.Rest.API.Exception.UserAlreadyExistException;
 import com.isen.m2.handfullproject.restapi.Rest.API.domain.User;
 import com.isen.m2.handfullproject.restapi.Rest.API.form.UserForm;
-
-import com.isen.m2.handfullproject.restapi.Rest.API.repository.UserRepository;
+import com.isen.m2.handfullproject.restapi.Rest.API.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.context.request.WebRequest;
 
-import javax.naming.Binding;
-import java.util.Iterator;
-import java.util.List;
+import javax.validation.Valid;
+import java.text.MessageFormat;
 
 @Controller
 public class UserController {
     Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
-    private UserRepository users;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private UserService userDetailsService;
 
     @GetMapping("/user/login")
     public String login() {
@@ -44,22 +38,14 @@ public class UserController {
     }
 
     @PostMapping("/user/register")
-    public String registerUserAccount(UserForm form, BindingResult result, Model model) {
-        if(result.hasErrors())
-        {
-            logger.error("Registration : has Error");
-            model.addAttribute("user",form);
+    public String registerUserAccount(@ModelAttribute("user") @Valid UserForm userForm, BindingResult result, Model model) {
+        try {
+            User registered = userDetailsService.registerNewUserAccount(userForm);
+        } catch (UserAlreadyExistException uaeEx) {
             return "register";
         }
-        User u = new User();
-        u.setEmail(form.getEmail());
-        u.setPassword(passwordEncoder.encode(form.getPassword()));
+        logger.info(MessageFormat.format("User with email {1} has been created",userForm.getEmail()));
 
-        logger.info("Registration : OK");
-        logger.info("Email : "+u.getEmail());
-        logger.info("Password : "+u.getPassword());
-        users.save(u);
-
-        return "redirect:/user/login";
+        return "welcome";
     }
 }

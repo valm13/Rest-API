@@ -1,6 +1,6 @@
 package com.isen.m2.handfullproject.restapi.Rest.API.config;
 
-import com.isen.m2.handfullproject.restapi.Rest.API.service.DbUserDetailsService;
+import com.isen.m2.handfullproject.restapi.Rest.API.service.MyUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,18 +10,18 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.thymeleaf.extras.springsecurity5.dialect.SpringSecurityDialect;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(securedEnabled = true)
+@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private DbUserDetailsService userDetailsService;
+    private MyUserDetailsService userDetailsService;
 
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests().antMatchers("/user/register").permitAll();
@@ -41,9 +41,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 
     }
-    protected void configure(AuthenticationManagerBuilder auth) {
-        auth.authenticationProvider(authenticationProvider());
-    }
+
+    protected void configure(AuthenticationManagerBuilder auth) {auth.authenticationProvider(authenticationProvider());}
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider(){
@@ -55,11 +54,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public PasswordEncoder encoder(){
-        return new BCryptPasswordEncoder(16);
+        return new BCryptPasswordEncoder(11);
     }
 
     @Bean
-    public UserDetailsService getUserDetails(){
-        return new DbUserDetailsService(); // Implementation class
+    public SpringSecurityDialect springSecurityDialect() {
+        return new SpringSecurityDialect();
     }
 }

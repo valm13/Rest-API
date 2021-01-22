@@ -12,7 +12,7 @@ import java.text.MessageFormat;
 import java.util.Optional;
 
 @Service
-public class DbUserDetailsService implements UserDetailsService {
+public class MyUserDetailsService implements UserDetailsService {
 
     @Autowired
     private UserRepository users;
@@ -20,9 +20,10 @@ public class DbUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
         final Optional<User> optionalUser = users.findByEmail(login);
-        if(optionalUser.isPresent())
-            return optionalUser.get();
-        else
+        if(!optionalUser.isPresent()){
             throw new UsernameNotFoundException(MessageFormat.format("User with email {0} cannot be found",login));
+        }
+
+        return optionalUser.get();
     }
 }

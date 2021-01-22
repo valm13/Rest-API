@@ -1,6 +1,6 @@
 <!doctype html>
-<html xmlns:th="http://www.thymeleaf.org"
-	th:fragment="layout (title, content)">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml"
+	  th:fragment="layout (title, content)">
 <head>
 <!-- Required meta tags -->
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -33,12 +33,15 @@
 			<span class="navbar-toggler-icon"></span>
 		</button>
 		<div class="collapse navbar-collapse" id="navbarNav">
-			<ul class="navbar-nav">
+			<ul class="navbar-nav mr-auto">
 				<li th:classappend="${#httpServletRequest.getRequestURI() == '/user/login' ? 'active':''}"class="nav-item"><a class="nav-link" href="#" th:href="@{/user/login}">Connexion</a>
 				</li>
-				<li th:classappend="${#httpServletRequest.getRequestURI() == '/user/registration' ? 'active':''}"class="nav-item"><a class="nav-link" href="#" th:href="@{/user/register}">Inscription</a></li>
+				<li th:classappend="${#httpServletRequest.getRequestURI() == '/user/registration' ? 'active':''}"class="nav-item"><a class="nav-link" href="#" th:href="@{/user/register}">Inscription</a>
 				</li>
 			</ul>
+			<div sec:authorize="isAuthenticated()">
+				<a class="btn btn-danger" href="/user/logout">Déconnexion</a>
+			</div>
 		</div>
 	</nav>
 	

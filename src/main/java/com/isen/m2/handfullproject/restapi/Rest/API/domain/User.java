@@ -1,50 +1,34 @@
 package com.isen.m2.handfullproject.restapi.Rest.API.domain;
 
-import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
-import java.util.Collections;
 
 @Getter
 @Setter
 @Entity
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-@Table(name = "users")
+@Table(name = "user_account")
 public class User implements UserDetails {
 
     @Id
+    @Column(unique = true, nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(length = 100)
     private String email;
 
+    @Column(length = 100)
     private String password;
 
-    @Builder.Default
-    private UserRole userRole = UserRole.USER;
+    private Boolean enabled;
+    private Boolean locked;
 
-    @Builder.Default
-    private Boolean locked = false;
-
-    @Builder.Default
-    private Boolean enabled =false;
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        final SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(userRole.name());
-        return Collections.singletonList(simpleGrantedAuthority);
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
+    @ManyToMany(fetch = FetchType.EAGER)
+    private Collection<Authority> authorities;
 
     @Override
     public String getUsername() {
